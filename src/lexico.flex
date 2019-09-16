@@ -80,6 +80,13 @@ espacio		= [ \t]+
 "size"			{	if(debug) System.out.println("token SIZE");
 			return sf.newSymbol("SIZE",sym.SIZE);
 			}
+"int"      {  if (debug) System.out.println("token INT");
+      return sf.newSymbol("INT", sym.INT);
+      }
+      
+"bool"      {  if (debug) System.out.println("token BOOL");
+      return sf.newSymbol("BOOL", sym.BOOL);
+      }
 ":="            {	if(debug) System.out.println("token ASSIGN");
 			return sf.newSymbol("ASSIGN",sym.ASSIGN);
 			}
