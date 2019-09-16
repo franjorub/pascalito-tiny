@@ -104,6 +104,9 @@ non terminal NodoBase array_stmt;
 non terminal NodoBase array_var;
 non terminal NodoBase while_stmt;
 non terminal NodoBase for_stmt;
+non terminal NodoBase decl_stmt;
+non terminal NodoBase ids_seq; /*Recursivo*/
+non terminal var_type;
 
 
 
