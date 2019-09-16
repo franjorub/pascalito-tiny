@@ -83,6 +83,9 @@ terminal DIS;
 terminal DISY;
 terminal CONJ;
 terminal NEG;
+terminal COMMA;
+terminal BOOL;
+terminal INT;
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -103,7 +106,11 @@ non terminal NodoBase array_stmt;
 non terminal NodoBase array_var;
 non terminal NodoBase while_stmt;
 non terminal NodoBase for_stmt;
-
+/*Reglas de declaraciones*/
+non terminal NodoBase decl_stmt;
+non terminal NodoBase ids_seq; /*Recursivo*/
+non terminal var_type;
+/*Fin No terminales*/
 
 
 /* Precedencia de operadores NO USAR FALLA  
@@ -162,11 +169,56 @@ stmt        ::= if_stmt:sif	{: if(debug) System.out.println("\t regla 3a");
 			| array_var:sarr_var	{:
 					RESULT = sarr_var;
 			:}
+			| decl_stmt:dsms   {:  if   (debug)  System.out.println("\t regla 3g");
+          		 	RESULT = dsms;
+        	:}
             | error	{: if(debug) System.out.println("\t regla 3f"); 
 				System.out.println("Ocurrio error en cup # 0004");
 				RESULT=null;
 				:}
             ;
+
+/*Declaraciones de variables*/      
+decl_stmt  ::=  var_type:type ids_seq:seq {: System.out.println("\t Seteando tipos a variables" + type.toString());
+          //NodoIdentificador nodo = (NodoIdentificador)seq;
+          //nodo.setTipo(type.toString());
+          
+          NodoBase hijoActual = seq;
+          NodoBase siguiente = new NodoIdentificador();
+          
+          if(hijoActual != null){
+            while(hijoActual.TieneHermano()){
+              hijoActual = hijoActual.getHermanoDerecha();
+              System.out.println("Hola");
+            }
+            
+            hijoActual.setHermanoDerecha(siguiente);
+            RESULT = siguiente;
+            
+          }else{
+            RESULT=seq;
+          }
+        :}
+      ;
+      
+var_type ::=  BOOL {: if(debug) System.out.println("\t");
+          System.out.println("Tipo de variables booleanas"); 
+          RESULT = "booleano";
+        :}
+      |  INT  {:
+          System.out.println("Tipo de variables enteras"); 
+          RESULT = "entero";
+        :}
+      ;
+    
+ids_seq   ::=  ids_seq:sec COMMA ID:variable  {: System.out.println("\t Genera id y coma");
+          RESULT = new NodoIdentificador(variable.toString());
+        :}
+      | ID:variable {: if(debug) System.out.println("\t Genera id individual"); 
+          RESULT = new NodoIdentificador (variable.toString());
+        :}
+      ;
+/*Fin declaraciones de variables*/
 
 if_stmt     ::= IF exp_log:ex THEN stmt_seq:pthen END	{: if(debug) System.out.println("\t regla 4a"); 
 		RESULT = new NodoIf(ex,pthen);
