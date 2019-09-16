@@ -255,7 +255,16 @@ public class Generador {
 			case	por:	UtGen.emitirRO("MUL", UtGen.AC, UtGen.AC1, UtGen.AC, "op: *");
 							break;
 			case	entre:	UtGen.emitirRO("DIV", UtGen.AC, UtGen.AC1, UtGen.AC, "op: /");
-							break;		
+							break;
+			case	modulo:	UtGen.emitirRM("ST", UtGen.AC1, 0, 5, "Guardamos en la dirMem 0 a valor de AC1");
+							UtGen.emitirRM("ST", UtGen.AC, 1, 5, "Guardamos en la dirMem 1 a AC");
+							UtGen.emitirRO("DIV", UtGen.AC, UtGen.AC1, UtGen.AC, "Divide como 1era op necesaria para calc. mod");
+							UtGen.emitirRM("ST", UtGen.AC, 2, 5, "Guardamos en la dirMem 2 a AC");
+							UtGen.emitirRM("LD", UtGen.AC1, 1, 5, "cargar valor en dirMem 1 en AC1 ");
+							UtGen.emitirRO("MUL", UtGen.AC, UtGen.AC1, UtGen.AC, "Multiplicamos resultado de Div anterior por Divisor");
+							UtGen.emitirRM("LD", UtGen.AC1, 0, 5, "cargar valor en dirMem 0 en AC1 ");
+							UtGen.emitirRO("SUB", UtGen.AC, UtGen.AC1, UtGen.AC, "Resta result Mul anterio");
+							break;
 			case	menor:	UtGen.emitirRO("SUB", UtGen.AC, UtGen.AC1, UtGen.AC, "op: <");
 							UtGen.emitirRM("JLT", UtGen.AC, 2, UtGen.PC, "voy dos instrucciones mas alla if verdadero (AC<0)");
 							UtGen.emitirRM("LDC", UtGen.AC, 0, UtGen.AC, "caso de falso (AC=0)");
