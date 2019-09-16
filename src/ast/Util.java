@@ -89,6 +89,11 @@ public class Util {
 		    	System.out.println("**Expr Derecha Operacion**");		    	
 		    	imprimirAST(((NodoOperacion)raiz).getOpDerecho());
 		    }
+		    else if (raiz instanceof NodoOperacionUnaria){
+		    	printSpaces();
+		    	System.out.println("**Expr Derecha Operacion**");		    	
+		    	imprimirAST(((NodoOperacionUnaria)raiz).getOpDerecho());
+		    }
 		    raiz = raiz.getHermanoDerecha();
 		  }
 		  sangria-=2;

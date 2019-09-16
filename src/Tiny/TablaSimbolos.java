@@ -13,6 +13,7 @@ import ast.NodoRepeat;
 import ast.NodoValor;
 import ast.NodoWhile;
 import ast.NodoFor;
+import ast.NodoOperacionUnaria;
 
 public class TablaSimbolos {
 	private HashMap<String, RegistroSimbolo> tabla;
@@ -64,6 +65,9 @@ public class TablaSimbolos {
 	    	cargarTabla(((NodoOperacion)raiz).getOpIzquierdo());
 	    	cargarTabla(((NodoOperacion)raiz).getOpDerecho());
 	    }
+	    else if (raiz instanceof NodoOperacionUnaria) {
+		    cargarTabla(((NodoOperacionUnaria)raiz).getOpDerecho());
+		}
 	    else if(raiz instanceof NodoArray) {
 	    	NodoIdentificador identificador = ((NodoArray)raiz).getIdentificador();
 	    	NodoValor tam = (NodoValor)((NodoArray)raiz).getTam();	    	

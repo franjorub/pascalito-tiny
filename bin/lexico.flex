@@ -101,6 +101,15 @@ espacio		= [ \t]+
 "<>"             {	if(debug) System.out.println("token DIS");
 			return sf.newSymbol("DIS",sym.DIS);
 			}
+"and"             {	if(debug) System.out.println("token CONJ");
+			return sf.newSymbol("CONJ",sym.CONJ);
+			}
+"or"             {	if(debug) System.out.println("token DISY");
+			return sf.newSymbol("DISY",sym.DISY);
+			}
+"not"             {	if(debug) System.out.println("token NEG");
+			return sf.newSymbol("NEG",sym.NEG);
+			}
 "+"             {	if(debug) System.out.println("token PLUS");
 			return sf.newSymbol("PLUS",sym.PLUS);
 			}

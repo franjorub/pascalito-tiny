@@ -80,6 +80,9 @@ terminal MI;
 terminal GT;
 terminal MAI;
 terminal DIS;
+terminal DISY;
+terminal CONJ;
+terminal NEG;
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -90,6 +93,8 @@ non terminal NodoBase repeat_stmt;
 non terminal NodoBase assign_stmt;
 non terminal NodoBase read_stmt;
 non terminal NodoBase write_stmt;
+non terminal NodoBase exp_log;
+non terminal NodoBase exp_not;
 non terminal NodoBase exp;
 non terminal NodoBase simple_exp;
 non terminal NodoBase term;
@@ -163,16 +168,25 @@ stmt        ::= if_stmt:sif	{: if(debug) System.out.println("\t regla 3a");
 				:}
             ;
 
-if_stmt     ::= IF exp:ex THEN stmt_seq:pthen END	{: if(debug) System.out.println("\t regla 4a"); 
+if_stmt     ::= IF exp_log:ex THEN stmt_seq:pthen END	{: if(debug) System.out.println("\t regla 4a"); 
 		RESULT = new NodoIf(ex,pthen);
 		:}
-		| IF exp:ex THEN stmt_seq:pthen ELSE stmt_seq:pelse END	{: if(debug) System.out.println("\t regla 4b"); 
+		| IF exp_log:ex THEN stmt_seq:pthen ELSE stmt_seq:pelse END	{: if(debug) System.out.println("\t regla 4b"); 
 		RESULT = new NodoIf(ex,pthen,pelse);		
 		:}
 		;
 
-repeat_stmt ::= REPEAT stmt_seq:cuerpo UNTIL exp:prueba	{: if(debug) System.out.println("\t regla 5"); 
+repeat_stmt ::= REPEAT stmt_seq:cuerpo UNTIL exp_log:prueba	{: if(debug) System.out.println("\t regla 5"); 
 							RESULT = new NodoRepeat(cuerpo,prueba);
+							:}
+		;
+while_stmt ::= WHILE exp_log:prueba THEN stmt_seq:cuerpo ENDWHILE {: if(debug) System.out.println("\t regla 5b");
+							RESULT = new NodoWhile(cuerpo,prueba);
+							:}
+		;
+		
+for_stmt ::= FOR assign_stmt:asignap SEMI exp_log:prueba SEMI assign_stmt:asignat SEMI THEN stmt_seq:cuerpo ENDFOR {: if(debug) System.out.println("\t regla 5b");
+							RESULT = new NodoFor(asignap,prueba,asignat,cuerpo);
 							:}
 		;
 
@@ -180,7 +194,7 @@ assign_stmt ::= ID:variable 	{: if(debug) System.out.println("\t regla 6 parte d
 				/*lineanum=1000; //Pasar/Obtener la linea correcta por el Simbolo
 				String nombre = variable.getName();*/
 				:}
-			ASSIGN exp:ex	{: if(debug) System.out.println("\t regla 6 parte final");
+			ASSIGN exp_log:ex	{: if(debug) System.out.println("\t regla 6 parte final");
 					if(variable!=null)
 					RESULT = new NodoAsignacion(variable.toString(),ex);
 					else{
@@ -204,29 +218,37 @@ read_stmt   ::= READ ID:variable	{: if(debug) System.out.println("\t regla 7");
 					:}
 		;
 
-write_stmt  ::= WRITE exp:ex	{: if(debug) System.out.println("\t regla 8"); 
+write_stmt  ::= WRITE exp_log:ex	{: if(debug) System.out.println("\t regla 8"); 
 					RESULT= new NodoEscribir(ex);
 					:}
 		;
 		
-array_stmt	::= ARRAY ID:variable SIZE simple_exp:exp	{:
+array_stmt	::= ARRAY ID:variable SIZE exp_log:exp	{:
 					if(debug) System.out.println("\t regla Array"); 
 					RESULT = new NodoArray(new NodoIdentificador(variable.toString()), exp);
 				:}
 		;
 
-array_var	::= ID:variable LCOR simple_exp:exp RCOR {:
+array_var	::= ID:variable LCOR exp_log:exp RCOR {:
 					if(debug) System.out.println("\t regla Array variable"); 
 					RESULT = new NodoIdentificadorArray(variable.toString(), exp);
 				:}
 		;
-while_stmt ::= WHILE exp:prueba THEN stmt_seq:cuerpo ENDWHILE {: if(debug) System.out.println("\t regla 5b");
-							RESULT = new NodoWhile(cuerpo,prueba);
+exp_log		::=	exp_not:exI CONJ exp_log:exD  {: if(debug) System.out.println("\t	regla 8Pa");
+								RESULT = new NodoOperacion(exI,tipoOp.conj,exD);
+								:}
+		| exp_not:exI DISY exp_log:exD {: if(debug) System.out.println("\t	regla 8Pb");
+							RESULT = new NodoOperacion(exI,tipoOp.disy,exD);
+							:}
+		| exp_not:exn {: if(debug) System.out.println("\t	regla 8Pc");
+							RESULT =exn;
 							:}
 		;
-		
-for_stmt ::= FOR assign_stmt:asignap SEMI exp:prueba SEMI assign_stmt:asignat SEMI THEN stmt_seq:cuerpo ENDFOR {: if(debug) System.out.println("\t regla 5b");
-							RESULT = new NodoFor(asignap,prueba,asignat,cuerpo);
+exp_not		::=	NEG exp_not:exD {:	if(debug) System.out.println("\t		regla 9Pa");
+							RESULT= new NodoOperacionUnaria(tipoOp.neg,exD);
+								:}
+		| exp:ex {: if(debug) System.out.println("\t	regla 8Pc");
+							RESULT =ex;
 							:}
 		;
 exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println("\t regla 9a"); 

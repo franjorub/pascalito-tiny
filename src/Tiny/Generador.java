@@ -81,6 +81,8 @@ public class Generador {
 			generarIdentificador(nodo);
 		}else if (nodo instanceof NodoOperacion){
 			generarOperacion(nodo);
+		}else if (nodo instanceof NodoOperacionUnaria){
+			generarOperacionUnaria(nodo);
 		}else{
 			System.out.println("BUG: Tipo de nodo a generar desconocido");
 		}
@@ -286,6 +288,38 @@ public class Generador {
 							break;
 			case	dis:	UtGen.emitirRO("SUB", UtGen.AC, UtGen.AC1, UtGen.AC, "op: <>");
 							UtGen.emitirRM("JNE", UtGen.AC, 2, UtGen.PC, "voy dos instrucciones mas alla if verdadero (AC==0)");
+							UtGen.emitirRM("LDC", UtGen.AC, 0, UtGen.AC, "caso de falso (AC=0)");
+							UtGen.emitirRM("LDA", UtGen.PC, 1, UtGen.PC, "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)");
+							UtGen.emitirRM("LDC", UtGen.AC, 1, UtGen.AC, "caso de verdadero (AC=1)");
+							break;
+			case 	conj:	UtGen.emitirRO("MUL", UtGen.AC, UtGen.AC1, UtGen.AC, "op log: AND - 1.Multiplica AC * AC1");
+							UtGen.emitirRM("JNE", UtGen.AC, 2, UtGen.PC, "Salto 2 instrucciones si es True (ACC!=0)");
+							UtGen.emitirRM("LDC", UtGen.AC, 0, UtGen.AC, "caso de falso (AC=0)");
+							UtGen.emitirRM("LDA", UtGen.PC, 1, UtGen.PC, "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)");
+							UtGen.emitirRM("LDC", UtGen.AC, 1, UtGen.AC, "caso de verdadero (AC=1)");
+							break;
+			case	disy:	UtGen.emitirRO("ADD", UtGen.AC, UtGen.AC1, UtGen.AC, "op log: OR - 1.Suma opI mas opD");
+							UtGen.emitirRM("LDC", UtGen.AC1, 1, 0, "Carga constante 2 en AC1");
+							UtGen.emitirRO("MUL", UtGen.AC, UtGen.AC, UtGen.AC1, "2.Suma result de SUB (AC) menos -2, Guarda en AC");
+							UtGen.emitirRM("JNE", UtGen.AC, 2, UtGen.PC, "Salto 2 instrucciones si es True (ACC==0)");
+							UtGen.emitirRM("LDC", UtGen.AC, 0, UtGen.AC, "caso de falso (AC=0)");
+							UtGen.emitirRM("LDA", UtGen.PC, 1, UtGen.PC, "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)");
+							UtGen.emitirRM("LDC", UtGen.AC, 1, UtGen.AC, "caso de verdadero (AC=1)");
+							break;
+			default:
+							UtGen.emitirComentario("BUG: tipo de operacion desconocida");
+		}
+		if(UtGen.debug)	UtGen.emitirComentario("<- Operacion: " + n.getOperacion());
+	}
+	
+	private static void generarOperacionUnaria(NodoBase nodo){
+		NodoOperacionUnaria n = (NodoOperacionUnaria) nodo;
+		if(UtGen.debug)	UtGen.emitirComentario("-> Operacion: " + n.getOperacion());
+		/* Genero la expresion derecha de la operacion */
+		generar(n.getOpDerecho());
+		switch(n.getOperacion()){
+			
+			case	 neg: 	UtGen.emitirRM("JEQ", UtGen.AC, 2, UtGen.PC, "op: NOT - Salta dos posiciones si es True (AC==0)");
 							UtGen.emitirRM("LDC", UtGen.AC, 0, UtGen.AC, "caso de falso (AC=0)");
 							UtGen.emitirRM("LDA", UtGen.PC, 1, UtGen.PC, "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)");
 							UtGen.emitirRM("LDC", UtGen.AC, 1, UtGen.AC, "caso de verdadero (AC=1)");
