@@ -85,8 +85,8 @@ terminal CONJ;
 terminal NEG;
 terminal MODULO;
 terminal COMMA;
-TERMINAL INT;
-TERMINAL BOOL;
+terminal INT;
+terminal BOOL;
 
 /* Simbolos No Terminales */
 non terminal program;
