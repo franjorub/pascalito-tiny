@@ -1,0 +1,10 @@
+for x:=2; x<5; x:=x+1; then 
+for y:=2; y<5; y:=y+1; then 
+z:=7;
+while z<9 then 
+z:=z+1;
+write z
+endwhile
+endfor
+endfor
+

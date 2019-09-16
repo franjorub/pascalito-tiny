@@ -63,6 +63,10 @@ public class Generador {
 			generarIf(nodo);
 		}else if (nodo instanceof  NodoRepeat){
 			generarRepeat(nodo);
+		}else if (nodo instanceof  NodoWhile){
+			generarWhile(nodo);
+		}else if (nodo instanceof  NodoFor){
+			generarFor(nodo);
 		}else if (nodo instanceof  NodoAsignacion){
 			generarAsignacion(nodo);
 		}else if (nodo instanceof  NodoArray){
@@ -128,6 +132,55 @@ public class Generador {
 			UtGen.emitirRM_Abs("JEQ", UtGen.AC, localidadSaltoInicio, "repeat: jmp hacia el inicio del cuerpo");
 		if(UtGen.debug)	UtGen.emitirComentario("<- repeat");
 	}		
+	
+	private static void generarWhile(NodoBase nodo){
+    	NodoWhile n = (NodoWhile)nodo;
+		int localidadSaltoInicio = 0;
+		int localidadSaltoFinal = 0;
+		int localidadActual= 0;
+		if(UtGen.debug)	UtGen.emitirComentario("-> while");
+		UtGen.emitirComentario("while: el salto hacia el final (luego del cuerpo) del while debe estar aqui");
+		
+		/* Genero el codigo de la prueba del while */
+		UtGen.emitirComentario("antes prueba");
+		
+		localidadSaltoInicio = UtGen.emitirSalto(0);
+		generar(n.getPrueba());
+		
+		localidadSaltoFinal = UtGen.emitirSalto(1);
+		UtGen.emitirComentario("salto al final");
+		generar(n.getCuerpo());
+		UtGen.emitirRM_Abs("LDA", UtGen.PC, localidadSaltoInicio, "if: jmp hacia el final");
+		localidadActual = UtGen.emitirSalto(0);
+		UtGen.cargarRespaldo(localidadSaltoFinal);
+		UtGen.emitirRM_Abs("JEQ", UtGen.AC, localidadActual, "if: jmp hacia el final");
+		UtGen.restaurarRespaldo();
+		UtGen.emitirComentario("despues cuerpo");
+		if(UtGen.debug)	UtGen.emitirComentario("<- while");
+	}
+	
+	private static void generarFor(NodoBase nodo){
+		NodoFor n = (NodoFor)nodo;
+		int localidadSaltoInicio = 0;
+		int localidadSaltoFinal = 0;
+		int localidadActual= 0;
+		if(UtGen.debug)	UtGen.emitirComentario("-> for");
+		
+		generar(n.getAsignaP());
+		
+		localidadSaltoInicio = UtGen.emitirSalto(0);
+		generar(n.getPrueba());
+		localidadSaltoFinal = UtGen.emitirSalto(1);
+		
+		generar(n.getCuerpo());
+		generar(n.getAsignaT());
+		UtGen.emitirRM_Abs("LDA", UtGen.PC, localidadSaltoInicio, "if: jmp hacia el final");
+		localidadActual = UtGen.emitirSalto(0);
+		UtGen.cargarRespaldo(localidadSaltoFinal);
+		UtGen.emitirRM_Abs("JEQ", UtGen.AC, localidadActual, "if: jmp hacia el final");
+		
+		UtGen.restaurarRespaldo();
+	}
 	
 	private static void generarAsignacion(NodoBase nodo){
 		NodoAsignacion n = (NodoAsignacion)nodo;

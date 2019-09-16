@@ -56,6 +56,18 @@ espacio		= [ \t]+
 "until"         {	if(debug) System.out.println("token UNTIL");
 			return sf.newSymbol("UNTIL",sym.UNTIL);
 			}
+"while"         {	if(debug) System.out.println("token WHILE");
+			return sf.newSymbol("WHILE",sym.WHILE);
+			}
+"endwhile"         {	if(debug) System.out.println("token ENDWHILE");
+			return sf.newSymbol("ENDWHILE",sym.ENDWHILE);
+			}
+"for"         {	if(debug) System.out.println("token FOR");
+			return sf.newSymbol("FOR",sym.FOR);
+			}
+"endfor"         {	if(debug) System.out.println("token ENDFOR");
+			return sf.newSymbol("ENDFOR",sym.ENDFOR);
+			}
 "read"          {	if(debug) System.out.println("token READ");
 			return sf.newSymbol("READ",sym.READ);
 			}
