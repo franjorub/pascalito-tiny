@@ -95,6 +95,12 @@ espacio		= [ \t]+
 ">"             {	if(debug) System.out.println("token GT");
 			return sf.newSymbol("GT",sym.GT);
 			}
+">="             {	if(debug) System.out.println("token MAI");
+			return sf.newSymbol("MAI",sym.MAI);
+			}
+"<>"             {	if(debug) System.out.println("token DIS");
+			return sf.newSymbol("DIS",sym.DIS);
+			}
 "+"             {	if(debug) System.out.println("token PLUS");
 			return sf.newSymbol("PLUS",sym.PLUS);
 			}
