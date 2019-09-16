@@ -72,6 +72,10 @@ terminal ARRAY;
 terminal LCOR;
 terminal RCOR;
 terminal SIZE;
+terminal WHILE;
+terminal ENDWHILE;
+terminal FOR;
+terminal ENDFOR;
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -88,6 +92,9 @@ non terminal NodoBase term;
 non terminal NodoBase factor;
 non terminal NodoBase array_stmt;
 non terminal NodoBase array_var;
+non terminal NodoBase while_stmt;
+non terminal NodoBase for_stmt;
+
 
 
 /* Precedencia de operadores NO USAR FALLA  
@@ -124,6 +131,12 @@ stmt        ::= if_stmt:sif	{: if(debug) System.out.println("\t regla 3a");
 					:}
             | repeat_stmt:srep	{: if(debug) System.out.println("\t regla 3b"); 
 						RESULT=srep;
+						:}
+			| while_stmt:swhil	{: if(debug) System.out.println("\t regla 3c"); 
+						RESULT=swhil;
+						:}
+			| for_stmt:sfor	{: if(debug) System.out.println("\t regla 3h"); 
+						RESULT=sfor;
 						:}
             | assign_stmt:sasi	{: if(debug) System.out.println("\t regla 3c"); 
 						RESULT=sasi;
@@ -202,6 +215,15 @@ array_var	::= ID:variable LCOR simple_exp:exp RCOR {:
 					if(debug) System.out.println("\t regla Array variable"); 
 					RESULT = new NodoIdentificadorArray(variable.toString(), exp);
 				:}
+		;
+while_stmt ::= WHILE exp:prueba THEN stmt_seq:cuerpo ENDWHILE {: if(debug) System.out.println("\t regla 5b");
+							RESULT = new NodoWhile(cuerpo,prueba);
+							:}
+		;
+		
+for_stmt ::= FOR assign_stmt:asignap SEMI exp:prueba SEMI assign_stmt:asignat SEMI THEN stmt_seq:cuerpo ENDFOR {: if(debug) System.out.println("\t regla 5b");
+							RESULT = new NodoFor(asignap,prueba,asignat,cuerpo);
+							:}
 		;
 exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println("\t regla 9a"); 
 								RESULT = new NodoOperacion(exI,tipoOp.menor,exD);
