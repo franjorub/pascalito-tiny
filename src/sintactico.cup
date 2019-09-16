@@ -171,6 +171,46 @@ stmt        ::= if_stmt:sif	{: if(debug) System.out.println("\t regla 3a");
 				RESULT=null;
 				:}
             ;
+            
+decl_stmt  ::=  var_type:type ids_seq:seq {: System.out.println("\t Seteando tipos a variables" + type.toString());
+          //NodoIdentificador nodo = (NodoIdentificador)seq;
+          //nodo.setTipo(type.toString());
+          
+          NodoBase hijoActual = seq;
+          NodoBase siguiente = new NodoIdentificador();
+          
+          if(hijoActual != null){
+            while(hijoActual.TieneHermano()){
+              hijoActual = hijoActual.getHermanoDerecha();
+              System.out.println("Hola");
+            }
+            
+            hijoActual.setHermanoDerecha(siguiente);
+            RESULT = siguiente;
+            
+          }else{
+            RESULT=seq;
+          }
+        :}
+      ;
+      
+var_type ::=  BOOL {: if(debug) System.out.println("\t");
+          System.out.println("Tipo de variables booleanas"); 
+          RESULT = "booleano";
+        :}
+      |  INT  {:
+          System.out.println("Tipo de variables enteras"); 
+          RESULT = "entero";
+        :}
+      ;
+    
+ids_seq   ::=  ids_seq:sec COMMA ID:variable  {: System.out.println("\t Genera id y coma");
+          RESULT = new NodoIdentificador(variable.toString());
+        :}
+      | ID:variable {: if(debug) System.out.println("\t Genera id individual"); 
+          RESULT = new NodoIdentificador (variable.toString());
+        :}
+      ;
 
 if_stmt     ::= IF exp_log:ex THEN stmt_seq:pthen END	{: if(debug) System.out.println("\t regla 4a"); 
 		RESULT = new NodoIf(ex,pthen);
