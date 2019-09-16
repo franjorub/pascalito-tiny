@@ -76,6 +76,7 @@ terminal WHILE;
 terminal ENDWHILE;
 terminal FOR;
 terminal ENDFOR;
+terminal MI;
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -230,6 +231,9 @@ exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println
 								:} 
 		| simple_exp:exI EQ simple_exp:exD	{: if(debug) System.out.println("\t regla 9b"); 
 							RESULT = new NodoOperacion(exI,tipoOp.igual,exD);
+							:}
+		| simple_exp:exI MI simple_exp:exD	{: if(debug) System.out.println("\t regla 9d"); 
+							RESULT = new NodoOperacion(exI,tipoOp.mi,exD);
 							:}
 		| simple_exp:ex	{: if(debug) System.out.println("\t regla 9c"); 
 					RESULT = ex;

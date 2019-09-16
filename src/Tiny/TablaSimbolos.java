@@ -112,7 +112,6 @@ public class TablaSimbolos {
 	}
 
 	public int getDireccion(String Clave){
-		System.out.println("buscare " + Clave);
 		return BuscarSimbolo(Clave).getDireccionMemoria();
 	}
 	
