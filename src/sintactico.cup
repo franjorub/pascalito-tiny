@@ -166,6 +166,9 @@ stmt        ::= if_stmt:sif	{: if(debug) System.out.println("\t regla 3a");
 			| array_var:sarr_var	{:
 					RESULT = sarr_var;
 			:}
+			| decl_stmt:dsms   {:  if   (debug)  System.out.println("\t regla 3g");
+          RESULT = dsms;
+	        :}
             | error	{: if(debug) System.out.println("\t regla 3f"); 
 				System.out.println("Ocurrio error en cup # 0004");
 				RESULT=null;
